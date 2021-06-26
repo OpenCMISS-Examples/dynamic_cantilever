@@ -1,0 +1,136 @@
+<?xml version='1.0'?>
+<model cmeta:id="SinusoidDispBC" name="SinusoidDispBC" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#">
+    <component name="main">
+        <!-- Units -->
+        <units name="per_second">
+            <unit exponent="-1" units="second"/>
+        </units>
+        <units name="metre_per_second">
+            <unit exponent="1" units="metre"/>
+            <unit exponent="-1" units="second"/>
+        </units>
+        <!-- Variables-->
+        <variable name="time" units="second"/>
+        <variable initial_value="1.0" name="maxDisplacement" units="metre"/>
+        <variable initial_value="1.0" name="frequency" units="per_second"/>
+        <variable initial_value="0.0" name="phase" units="dimensionless"/>
+        <variable initial_value="0.0" name="dummy" units="metre"/>
+        <variable initial_value="0.0" name="geometricX" units="metre"/>
+        <variable initial_value="0.0" name="geometricY" units="metre"/>
+        <variable initial_value="0.0" name="geometricZ" units="metre"/>
+        <variable name="deformedX" units="metre"/>
+        <variable name="deformedY" units="metre"/>
+        <variable name="deformedZ" units="metre"/>
+        <variable name="velocityX" units="metre_per_second"/>
+        <variable name="velocityY" units="metre_per_second"/>
+        <variable name="velocityZ" units="metre_per_second"/>
+        <!-- Equations-->
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>deformedX</ci>
+                <apply>
+                    <plus/>
+                    <ci>geometricX</ci>
+                    <cn cellml:units="metre">0.0</cn>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>deformedY</ci>
+                <apply>
+                    <plus/>
+                    <ci>geometricY</ci>
+                    <apply>
+                        <times/>
+                        <ci>maxDisplacement</ci>
+                        <apply>
+                            <sin/>
+                            <apply>
+                                <plus/>
+                                <apply>
+                                    <times/>
+                                    <cn cellml:units="dimensionless">2.0</cn>
+                                    <pi/>
+                                    <ci>frequency</ci>
+                                    <ci>time</ci>
+                                </apply>
+                                <ci>phase</ci>
+                            </apply>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>deformedZ</ci>
+                <apply>
+                    <plus/>
+                    <ci>geometricZ</ci>
+                    <cn cellml:units="metre">0.0</cn>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>velocityX</ci>
+                <cn cellml:units="metre_per_second">0.0</cn>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>velocityY</ci>
+                <apply>
+                    <times/>
+                    <cn cellml:units="dimensionless">2.0</cn>
+                    <pi/>
+                    <ci>frequency</ci>
+                    <ci>maxDisplacement</ci>
+                    <apply>
+                        <cos/>
+                        <apply>
+                            <plus/>
+                            <apply>
+                                <times/>
+                                <cn cellml:units="dimensionless">2.0</cn>
+                                <pi/>
+                                <ci>frequency</ci>
+                                <ci>time</ci>
+                            </apply>
+                            <ci>phase</ci>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>velocityZ</ci>
+                <cn cellml:units="metre_per_second">0.0</cn>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>dummy</ci>
+                </apply>
+                <apply>
+                    <plus/>
+                    <apply>
+                        <times/>
+                        <apply>
+                            <plus/>
+                            <ci>deformedX</ci>
+                            <ci>deformedY</ci>
+                            <ci>deformedZ</ci>
+                        </apply>
+                        <ci>time</ci>
+                    </apply>
+                    <ci>velocityX</ci>
+                    <ci>velocityY</ci>
+                    <ci>velocityZ</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+</model>

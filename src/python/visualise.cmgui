@@ -1,0 +1,69 @@
+$numberOfProcessors = 1
+$maximumNumberOfSteps = 400
+
+#Read in the exnode files.
+for($rank=0; $rank < $numberOfProcessors; $rank=$rank+1)
+  {
+  foreach my $step (1..$maximumNumberOfSteps)
+  	  {
+  	  $filename = sprintf("Elasticity_%d.part%d.exnode", $step, $rank);
+	  if ( -e $filename)
+	     {
+	     	  print "Reading $filename at step $step\n";
+		  gfx read node $filename time $step region CantileverRegion;
+	     }
+	  }
+  }   
+#Read in the exelem files.
+for($rank=0; $rank < $numberOfProcessors; $rank=$rank+1)
+  {
+  $filename = sprintf("Elasticity_0.part%d.exelem", $rank);
+  print "Reading $filename\n";
+  gfx read elem $filename region CantileverRegion;
+  }   
+
+gfx def faces egroup CantileverRegion
+
+#Create the graphics window and set view angles
+gfx create window 1 double_buffer;
+gfx modify window 1 image add_light default;
+gfx modify window 1 layout simple ortho_axes z -y eye_spacing 0.25 height 1000 width 1500;
+gfx modify window 1 set current_pane 1;
+gfx modify window 1 background colour 0 0 0 texture none;
+gfx modify window 1 view parallel eye_point -45.0 20.0 45.0 interest_point 5.0 5.0 15.0 up_vector 0.30 0.95 -0.10 view_angle 40 near_clipping_plane 0.01 far_clipping_plane 150.0
+
+gfx define field CantileverRegion/Deformed component ElasticityDependent.1 ElasticityDependent.2 ElasticityDependent.3
+gfx define field CantileverRegion/Pressure component ElasticityDependent.4
+gfx define field CantileverRegion/Traction component ElasticityTraction.1 ElasticityTraction.2 ElasticityTraction.3
+gfx define field CantileverRegion/TractionMagnitude magnitude field Traction
+
+gfx create spectrum PressureSpectrum
+gfx modify spectrum PressureSpectrum clear overwrite_colour
+gfx modify spectrum PressureSpectrum linear reverse range -1.0 1.0 extend_above extend_below rainbow colour_range 0 1
+gfx create spectrum TractionSpectrum
+gfx modify spectrum TractionSpectrum clear overwrite_colour;
+gfx modify spectrum TractionSpectrum linear range 0.0 25.0 extend_above extend_below rainbow colour_range 0 1 component 1;
+
+#Display axes
+gfx modify g_element CantileverRegion point glyph axes_solid_xyz general size "5.0*5.0*5.0" centre 0,0,0 font default select_on material yellow selected_material default_selected
+
+#Display undeformed solid lines
+gfx modify g_element CantileverRegion lines coordinate Geometry tessellation default LOCAL native_discretization NONE select_on material default selected_material default_selected;
+
+#Display undeformed solid nodes
+gfx modify g_element CantileverRegion node_points coordinate Geometry LOCAL glyph sphere general size "0.1*0.1*0.1" centre 0,0,0 label cmiss_number font default select_on material default selected_material default_selected;
+
+#Display deformed solid lines
+gfx modify g_element CantileverRegion lines coordinate Deformed material red
+
+#Display hydrostatic pressure
+#gfx modify g_element CantileverRegion surfaces coordinate Deformed exterior tessellation default LOCAL native_discretization NONE select_on data Pressure spectrum PressureSpectrum selected_material default_selected render_shaded;
+
+#Display tractions
+#gfx modify g_element CantileverRegion node_points coordinate Deformed glyph arrow_solid general size "1.0*1.01*1.0" centre 0,0,0 font default orientation Traction select_on material default data TractionMagnitude scale_factors "0.05*0.01*0.00" selected_material default_selected spectrum TractionSpectrum
+
+#Write out image
+gfx print window 1 jpg file "FittedStress.jpg" height 1000 width 1500
+
+gfx edit scene
+
