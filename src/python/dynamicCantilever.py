@@ -157,6 +157,7 @@ pressureInterpolation = ELEMENT_CONSTANT
 
 # Should not need to change anything below here
 
+contextUserNumber = 1
 coordinateSystemUserNumber = 1
 regionUserNumber = 1
 linearLagrangeBasisUserNumber = 1
@@ -264,14 +265,17 @@ else:
 numberOfXi = numberOfDimensions    
 numberOfGauss = pow(numberOfGaussXi,numberOfXi)
 
+context = iron.Context()
+context.Create(contextUserNumber)
+
 worldRegion = iron.Region()
-iron.Context.WorldRegionGet(worldRegion)
+context.WorldRegionGet(worldRegion)
 
 iron.OutputSetOn("DynamicCantilever")
    
 # Get the computational nodes info
 computationEnvironment = iron.ComputationEnvironment()
-iron.Context.ComputationEnvironmentGet(computationEnvironment)
+context.ComputationEnvironmentGet(computationEnvironment)
 numberOfComputationalNodes = computationEnvironment.NumberOfWorldNodesGet()
 computationalNodeNumber = computationEnvironment.WorldNodeNumberGet()
 
@@ -280,7 +284,7 @@ computationEnvironment.WorldWorkGroupGet(worldWorkGroup)
 
 # Create a rectangular cartesian coordinate system
 coordinateSystem = iron.CoordinateSystem()
-coordinateSystem.CreateStart(coordinateSystemUserNumber,iron.Context)
+coordinateSystem.CreateStart(coordinateSystemUserNumber,context)
 coordinateSystem.DimensionSet(numberOfDimensions)
 coordinateSystem.CreateFinish()
 
@@ -300,7 +304,7 @@ cubicHermiteMeshComponent = 0
 if (haveCubicLagrange):
     # Define cubic Lagrange basis
     cubicLagrangeBasis = iron.Basis()
-    cubicLagrangeBasis.CreateStart(cubicLagrangeBasisUserNumber,iron.Context)
+    cubicLagrangeBasis.CreateStart(cubicLagrangeBasisUserNumber,context)
     cubicLagrangeBasis.TypeSet(iron.BasisTypes.LAGRANGE_HERMITE_TP)
     cubicLagrangeBasis.NumberOfXiSet(numberOfXi)
     cubicLagrangeBasis.InterpolationXiSet([iron.BasisInterpolationSpecifications.CUBIC_LAGRANGE]*numberOfXi)
@@ -312,7 +316,7 @@ if (haveCubicLagrange):
 if (haveQuadraticLagrange):
     # Define quadratic basis
     quadraticLagrangeBasis = iron.Basis()
-    quadraticLagrangeBasis.CreateStart(quadraticLagrangeBasisUserNumber,iron.Context)
+    quadraticLagrangeBasis.CreateStart(quadraticLagrangeBasisUserNumber,context)
     quadraticLagrangeBasis.TypeSet(iron.BasisTypes.LAGRANGE_HERMITE_TP)
     quadraticLagrangeBasis.NumberOfXiSet(numberOfXi)
     quadraticLagrangeBasis.InterpolationXiSet([iron.BasisInterpolationSpecifications.QUADRATIC_LAGRANGE]*numberOfXi)
@@ -324,7 +328,7 @@ if (haveQuadraticLagrange):
 if (haveLinearLagrange):
     # Define linear Lagrange basis
     linearLagrangeBasis = iron.Basis()
-    linearLagrangeBasis.CreateStart(linearLagrangeBasisUserNumber,iron.Context)
+    linearLagrangeBasis.CreateStart(linearLagrangeBasisUserNumber,context)
     linearLagrangeBasis.TypeSet(iron.BasisTypes.LAGRANGE_HERMITE_TP)
     linearLagrangeBasis.NumberOfXiSet(numberOfXi)
     linearLagrangeBasis.InterpolationXiSet([iron.BasisInterpolationSpecifications.LINEAR_LAGRANGE]*numberOfXi)
@@ -336,7 +340,7 @@ if (haveLinearLagrange):
 if (haveCubicHermite):    
     # Define cubic Hermite basis
     cubicHermiteBasis = iron.Basis()
-    cubicHermiteBasis.CreateStart(cubicHermiteBasisUserNumber,iron.Context)
+    cubicHermiteBasis.CreateStart(cubicHermiteBasisUserNumber,context)
     cubicHermiteBasis.TypeSet(iron.BasisTypes.LAGRANGE_HERMITE_TP)
     cubicHermiteBasis.NumberOfXiSet(numberOfXi)
     cubicHermiteBasis.InterpolationXiSet([iron.BasisInterpolationSpecifications.CUBIC_HERMITE]*numberOfXi)
@@ -748,7 +752,7 @@ else:
     print("Invalid time dependence")
     exit()
     
-elasticityProblem.CreateStart(elasticityProblemUserNumber,iron.Context,elasticityProblemSpecification)
+elasticityProblem.CreateStart(elasticityProblemUserNumber,context,elasticityProblemSpecification)
 elasticityProblem.CreateFinish()
 
 # Create the elasticity problem control loop
