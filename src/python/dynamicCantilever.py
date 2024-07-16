@@ -48,13 +48,13 @@ import math
 
 #import fpectl
 
-# Intialise OpenCMISS-Iron
-from opencmiss.iron import iron
+# Intialise OpenCMISS
+from opencmiss.opencmiss import OpenCMISS_Python as oc
 
 #fpectl.turnoff_sigfpe()
 
-iron.PetscOptionsSetValue("-ksp_view_rhs_binary","")
-iron.PetscOptionsSetValue("-ksp_view_mat_binary","")
+oc.PetscOptionsSetValue("-ksp_view_rhs_binary","")
+oc.PetscOptionsSetValue("-ksp_view_mat_binary","")
 
 ELEMENT_CONSTANT = 0
 LINEAR_LAGRANGE = 1
@@ -265,31 +265,31 @@ else:
 numberOfXi = numberOfDimensions    
 numberOfGauss = pow(numberOfGaussXi,numberOfXi)
 
-context = iron.Context()
+context = oc.Context()
 context.Create(contextUserNumber)
 
-worldRegion = iron.Region()
+worldRegion = oc.Region()
 context.WorldRegionGet(worldRegion)
 
-iron.OutputSetOn("DynamicCantilever")
+oc.OutputSetOn("DynamicCantilever")
    
 # Get the computational nodes info
-computationEnvironment = iron.ComputationEnvironment()
+computationEnvironment = oc.ComputationEnvironment()
 context.ComputationEnvironmentGet(computationEnvironment)
 numberOfComputationalNodes = computationEnvironment.NumberOfWorldNodesGet()
 computationalNodeNumber = computationEnvironment.WorldNodeNumberGet()
 
-worldWorkGroup = iron.WorkGroup()
+worldWorkGroup = oc.WorkGroup()
 computationEnvironment.WorldWorkGroupGet(worldWorkGroup)
 
 # Create a rectangular cartesian coordinate system
-coordinateSystem = iron.CoordinateSystem()
+coordinateSystem = oc.CoordinateSystem()
 coordinateSystem.CreateStart(coordinateSystemUserNumber,context)
 coordinateSystem.DimensionSet(numberOfDimensions)
 coordinateSystem.CreateFinish()
 
 # Create a region and assign the coordinate system to the region
-region = iron.Region()
+region = oc.Region()
 region.CreateStart(regionUserNumber,worldRegion)
 region.LabelSet("CantileverRegion")
 region.CoordinateSystemSet(coordinateSystem)
@@ -303,11 +303,11 @@ cubicHermiteMeshComponent = 0
 
 if (haveCubicLagrange):
     # Define cubic Lagrange basis
-    cubicLagrangeBasis = iron.Basis()
+    cubicLagrangeBasis = oc.Basis()
     cubicLagrangeBasis.CreateStart(cubicLagrangeBasisUserNumber,context)
-    cubicLagrangeBasis.TypeSet(iron.BasisTypes.LAGRANGE_HERMITE_TP)
+    cubicLagrangeBasis.TypeSet(oc.BasisTypes.LAGRANGE_HERMITE_TP)
     cubicLagrangeBasis.NumberOfXiSet(numberOfXi)
-    cubicLagrangeBasis.InterpolationXiSet([iron.BasisInterpolationSpecifications.CUBIC_LAGRANGE]*numberOfXi)
+    cubicLagrangeBasis.InterpolationXiSet([oc.BasisInterpolationSpecifications.CUBIC_LAGRANGE]*numberOfXi)
     cubicLagrangeBasis.QuadratureNumberOfGaussXiSet([numberOfGaussXi]*numberOfXi)
     cubicLagrangeBasis.CreateFinish()
     numberOfMeshComponents = numberOfMeshComponents + 1
@@ -315,11 +315,11 @@ if (haveCubicLagrange):
     
 if (haveQuadraticLagrange):
     # Define quadratic basis
-    quadraticLagrangeBasis = iron.Basis()
+    quadraticLagrangeBasis = oc.Basis()
     quadraticLagrangeBasis.CreateStart(quadraticLagrangeBasisUserNumber,context)
-    quadraticLagrangeBasis.TypeSet(iron.BasisTypes.LAGRANGE_HERMITE_TP)
+    quadraticLagrangeBasis.TypeSet(oc.BasisTypes.LAGRANGE_HERMITE_TP)
     quadraticLagrangeBasis.NumberOfXiSet(numberOfXi)
-    quadraticLagrangeBasis.InterpolationXiSet([iron.BasisInterpolationSpecifications.QUADRATIC_LAGRANGE]*numberOfXi)
+    quadraticLagrangeBasis.InterpolationXiSet([oc.BasisInterpolationSpecifications.QUADRATIC_LAGRANGE]*numberOfXi)
     quadraticLagrangeBasis.QuadratureNumberOfGaussXiSet([numberOfGaussXi]*numberOfXi)
     quadraticLagrangeBasis.CreateFinish()
     numberOfMeshComponents = numberOfMeshComponents + 1
@@ -327,11 +327,11 @@ if (haveQuadraticLagrange):
     
 if (haveLinearLagrange):
     # Define linear Lagrange basis
-    linearLagrangeBasis = iron.Basis()
+    linearLagrangeBasis = oc.Basis()
     linearLagrangeBasis.CreateStart(linearLagrangeBasisUserNumber,context)
-    linearLagrangeBasis.TypeSet(iron.BasisTypes.LAGRANGE_HERMITE_TP)
+    linearLagrangeBasis.TypeSet(oc.BasisTypes.LAGRANGE_HERMITE_TP)
     linearLagrangeBasis.NumberOfXiSet(numberOfXi)
-    linearLagrangeBasis.InterpolationXiSet([iron.BasisInterpolationSpecifications.LINEAR_LAGRANGE]*numberOfXi)
+    linearLagrangeBasis.InterpolationXiSet([oc.BasisInterpolationSpecifications.LINEAR_LAGRANGE]*numberOfXi)
     linearLagrangeBasis.QuadratureNumberOfGaussXiSet([numberOfGaussXi]*numberOfXi)
     linearLagrangeBasis.CreateFinish()
     numberOfMeshComponents = numberOfMeshComponents + 1
@@ -339,11 +339,11 @@ if (haveLinearLagrange):
 
 if (haveCubicHermite):    
     # Define cubic Hermite basis
-    cubicHermiteBasis = iron.Basis()
+    cubicHermiteBasis = oc.Basis()
     cubicHermiteBasis.CreateStart(cubicHermiteBasisUserNumber,context)
-    cubicHermiteBasis.TypeSet(iron.BasisTypes.LAGRANGE_HERMITE_TP)
+    cubicHermiteBasis.TypeSet(oc.BasisTypes.LAGRANGE_HERMITE_TP)
     cubicHermiteBasis.NumberOfXiSet(numberOfXi)
-    cubicHermiteBasis.InterpolationXiSet([iron.BasisInterpolationSpecifications.CUBIC_HERMITE]*numberOfXi)
+    cubicHermiteBasis.InterpolationXiSet([oc.BasisInterpolationSpecifications.CUBIC_HERMITE]*numberOfXi)
     cubicHermiteBasis.QuadratureNumberOfGaussXiSet([numberOfGaussXi]*numberOfXi)
     cubicHermiteBasis.CreateFinish()
     numberOfMeshComponents = numberOfMeshComponents + 1
@@ -370,9 +370,9 @@ elif (pressureInterpolation == QUADRATIC_LAGRANGE):
     pressureMeshComponent = quadraticLagrangeMeshComponent
 
 # Start the creation of a generated mesh in the region
-generatedMesh = iron.GeneratedMesh()
+generatedMesh = oc.GeneratedMesh()
 generatedMesh.CreateStart(generatedMeshUserNumber,region)
-generatedMesh.TypeSet(iron.GeneratedMeshTypes.REGULAR)
+generatedMesh.TypeSet(oc.GeneratedMeshTypes.REGULAR)
                       
 if (haveLinearLagrange):
     if (haveQuadraticLagrange):
@@ -429,17 +429,17 @@ else:
     generatedMesh.NumberOfElementsSet([numberOfGlobalXElements,numberOfGlobalYElements,numberOfGlobalZElements])
     
 # Finish the creation of a generated mesh in the region
-mesh = iron.Mesh()
+mesh = oc.Mesh()
 generatedMesh.CreateFinish(meshUserNumber,mesh)
 
 # Create a decomposition for the mesh
-decomposition = iron.Decomposition()
+decomposition = oc.Decomposition()
 decomposition.CreateStart(decompositionUserNumber,mesh)
-decomposition.TypeSet(iron.DecompositionTypes.CALCULATED)
+decomposition.TypeSet(oc.DecompositionTypes.CALCULATED)
 decomposition.CreateFinish()
 
 # Create a decomposer
-decomposer = iron.Decomposer()
+decomposer = oc.Decomposer()
 decomposer.CreateStart(decomposerUserNumber,worldRegion,worldWorkGroup)
 decompositionIndex = decomposer.DecompositionAdd(decomposition)
 decomposer.CreateFinish()
@@ -447,63 +447,63 @@ decomposer.CreateFinish()
 print("Geometric mesh component = %d" % geometricMeshComponent)
 
 # Create a field for the geometry
-geometricField = iron.Field()
+geometricField = oc.Field()
 geometricField.CreateStart(geometricFieldUserNumber,region)
 geometricField.DecompositionSet(decomposition)
-geometricField.TypeSet(iron.FieldTypes.GEOMETRIC)
-geometricField.VariableLabelSet(iron.FieldVariableTypes.U,"Geometry")
-geometricField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,1,geometricMeshComponent)
-geometricField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,2,geometricMeshComponent)
+geometricField.TypeSet(oc.FieldTypes.GEOMETRIC)
+geometricField.VariableLabelSet(oc.FieldVariableTypes.U,"Geometry")
+geometricField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,1,geometricMeshComponent)
+geometricField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,2,geometricMeshComponent)
 if (numberOfDimensions == 3):
-    geometricField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,3,geometricMeshComponent)
+    geometricField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,3,geometricMeshComponent)
 geometricField.CreateFinish()
 
 # Update the geometric field parameters from generated mesh
 generatedMesh.GeometricParametersCalculate(geometricField)
 
 # Create a fibre field and attach it to the geometric field
-fibreField = iron.Field()
+fibreField = oc.Field()
 fibreField.CreateStart(fibreFieldUserNumber,region)
-fibreField.TypeSet(iron.FieldTypes.FIBRE)
+fibreField.TypeSet(oc.FieldTypes.FIBRE)
 fibreField.DecompositionSet(decomposition)
 fibreField.GeometricFieldSet(geometricField)
-fibreField.VariableLabelSet(iron.FieldVariableTypes.U,"Fibre")
-fibreField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,1,fibreMeshComponent)
-fibreField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,2,fibreMeshComponent)
+fibreField.VariableLabelSet(oc.FieldVariableTypes.U,"Fibre")
+fibreField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,1,fibreMeshComponent)
+fibreField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,2,fibreMeshComponent)
 if (numberOfDimensions == 3):
-    fibreField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,3,fibreMeshComponent)
+    fibreField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,3,fibreMeshComponent)
 fibreField.CreateFinish()
 
 # Create the elasticity equations_set
-elasticityEquationsSetField = iron.Field()
-elasticityEquationsSet = iron.EquationsSet()
+elasticityEquationsSetField = oc.Field()
+elasticityEquationsSet = oc.EquationsSet()
 if (timeDependence == STATIC):
     if (materialLaw == ST_VENANT_KIRCHOFF_MATERIAL):
         print("Not implemented")
         exit()
     elif (materialLaw == MOONEY_RIVLIN_MATERIAL):
-        elasticityEquationsSetSpecification = [iron.EquationsSetClasses.ELASTICITY,
-                                               iron.EquationsSetTypes.FINITE_ELASTICITY,
-                                               iron.EquationsSetSubtypes.MOONEY_RIVLIN]
+        elasticityEquationsSetSpecification = [oc.EquationsSetClasses.ELASTICITY,
+                                               oc.EquationsSetTypes.FINITE_ELASTICITY,
+                                               oc.EquationsSetSubtypes.MOONEY_RIVLIN]
 elif (timeDependence == DYNAMIC):
     if (materialCompressibility == INCOMPRESSIBLE_MATERIAL):
         if (materialLaw == ST_VENANT_KIRCHOFF_MATERIAL):
-            elasticityEquationsSetSpecification = [iron.EquationsSetClasses.ELASTICITY,
-                                                   iron.EquationsSetTypes.FINITE_ELASTICITY,
-                                                   iron.EquationsSetSubtypes.DYNAMIC_ST_VENANT_KIRCHOFF]
+            elasticityEquationsSetSpecification = [oc.EquationsSetClasses.ELASTICITY,
+                                                   oc.EquationsSetTypes.FINITE_ELASTICITY,
+                                                   oc.EquationsSetSubtypes.DYNAMIC_ST_VENANT_KIRCHOFF]
         elif (materialLaw == MOONEY_RIVLIN_MATERIAL):
-            elasticityEquationsSetSpecification = [iron.EquationsSetClasses.ELASTICITY,
-                                                   iron.EquationsSetTypes.FINITE_ELASTICITY,
-                                                   iron.EquationsSetSubtypes.DYNAMIC_MOONEY_RIVLIN]
+            elasticityEquationsSetSpecification = [oc.EquationsSetClasses.ELASTICITY,
+                                                   oc.EquationsSetTypes.FINITE_ELASTICITY,
+                                                   oc.EquationsSetSubtypes.DYNAMIC_MOONEY_RIVLIN]
     elif (materialCompressibility == COMPRESSIBLE_MATERIAL):
         if (materialLaw == ST_VENANT_KIRCHOFF_MATERIAL):
-            elasticityEquationsSetSpecification = [iron.EquationsSetClasses.ELASTICITY,
-                                                   iron.EquationsSetTypes.FINITE_ELASTICITY,
-                                                   iron.EquationsSetSubtypes.DYNAMIC_COMP_ST_VENANT_KIRCHOFF]
+            elasticityEquationsSetSpecification = [oc.EquationsSetClasses.ELASTICITY,
+                                                   oc.EquationsSetTypes.FINITE_ELASTICITY,
+                                                   oc.EquationsSetSubtypes.DYNAMIC_COMP_ST_VENANT_KIRCHOFF]
         elif (materialLaw == MOONEY_RIVLIN_MATERIAL):
-            elasticityEquationsSetSpecification = [iron.EquationsSetClasses.ELASTICITY,
-                                                   iron.EquationsSetTypes.FINITE_ELASTICITY,
-                                                   iron.EquationsSetSubtypes.DYNAMIC_COMP_MOONEY_RIVLIN]
+            elasticityEquationsSetSpecification = [oc.EquationsSetClasses.ELASTICITY,
+                                                   oc.EquationsSetTypes.FINITE_ELASTICITY,
+                                                   oc.EquationsSetSubtypes.DYNAMIC_COMP_MOONEY_RIVLIN]
     else:
         print("Invalid material compressibility")
         exit()
@@ -517,52 +517,52 @@ elasticityEquationsSet.CreateStart(elasticityEquationsSetUserNumber,region,fibre
 elasticityEquationsSet.CreateFinish()
 
 # Create the dependent field
-elasticityDependentField = iron.Field()
+elasticityDependentField = oc.Field()
 elasticityEquationsSet.DependentCreateStart(elasticityDependentFieldUserNumber,elasticityDependentField)
-elasticityDependentField.VariableLabelSet(iron.FieldVariableTypes.U,"ElasticityDependent")
-elasticityDependentField.VariableLabelSet(iron.FieldVariableTypes.DELUDELN,"ElasticityTraction")
-elasticityDependentField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,1,geometricMeshComponent)
-elasticityDependentField.ComponentMeshComponentSet(iron.FieldVariableTypes.DELUDELN,1,geometricMeshComponent)
-elasticityDependentField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,2,geometricMeshComponent)
-elasticityDependentField.ComponentMeshComponentSet(iron.FieldVariableTypes.DELUDELN,2,geometricMeshComponent)
+elasticityDependentField.VariableLabelSet(oc.FieldVariableTypes.U,"ElasticityDependent")
+elasticityDependentField.VariableLabelSet(oc.FieldVariableTypes.T,"ElasticityTraction")
+elasticityDependentField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,1,geometricMeshComponent)
+elasticityDependentField.ComponentMeshComponentSet(oc.FieldVariableTypes.T,1,geometricMeshComponent)
+elasticityDependentField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,2,geometricMeshComponent)
+elasticityDependentField.ComponentMeshComponentSet(oc.FieldVariableTypes.T,2,geometricMeshComponent)
 if (numberOfDimensions == 3):
-    elasticityDependentField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,3,geometricMeshComponent)
-    elasticityDependentField.ComponentMeshComponentSet(iron.FieldVariableTypes.DELUDELN,3,geometricMeshComponent)
+    elasticityDependentField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,3,geometricMeshComponent)
+    elasticityDependentField.ComponentMeshComponentSet(oc.FieldVariableTypes.T,3,geometricMeshComponent)
 if (materialCompressibility == INCOMPRESSIBLE_MATERIAL):
     # Set the pressure to be nodally based and use the second mesh component
     if (pressureInterpolation == ELEMENT_CONSTANT):
-        elasticityDependentField.ComponentInterpolationSet(iron.FieldVariableTypes.U,numberOfDimensions+1,\
-                                                           iron.FieldInterpolationTypes.ELEMENT_BASED)
-        elasticityDependentField.ComponentInterpolationSet(iron.FieldVariableTypes.DELUDELN,numberOfDimensions+1,\
-                                                           iron.FieldInterpolationTypes.ELEMENT_BASED)                
+        elasticityDependentField.ComponentInterpolationSet(oc.FieldVariableTypes.U,numberOfDimensions+1,\
+                                                           oc.FieldInterpolationTypes.ELEMENT_BASED)
+        elasticityDependentField.ComponentInterpolationSet(oc.FieldVariableTypes.T,numberOfDimensions+1,\
+                                                           oc.FieldInterpolationTypes.ELEMENT_BASED)                
     else:
-        elasticityDependentField.ComponentInterpolationSet(iron.FieldVariableTypes.U,numberOfDimensions+1,\
-                                                           iron.FieldInterpolationTypes.NODE_BASED)
-        elasticityDependentField.ComponentInterpolationSet(iron.FieldVariableTypes.DELUDELN,numberOfDimensions+1,\
-                                                           iron.FieldInterpolationTypes.NODE_BASED)
-    elasticityDependentField.ComponentMeshComponentSet(iron.FieldVariableTypes.U,numberOfDimensions+1,pressureMeshComponent)
-    elasticityDependentField.ComponentMeshComponentSet(iron.FieldVariableTypes.DELUDELN,numberOfDimensions+1,pressureMeshComponent)
+        elasticityDependentField.ComponentInterpolationSet(oc.FieldVariableTypes.U,numberOfDimensions+1,\
+                                                           oc.FieldInterpolationTypes.NODE_BASED)
+        elasticityDependentField.ComponentInterpolationSet(oc.FieldVariableTypes.T,numberOfDimensions+1,\
+                                                           oc.FieldInterpolationTypes.NODE_BASED)
+    elasticityDependentField.ComponentMeshComponentSet(oc.FieldVariableTypes.U,numberOfDimensions+1,pressureMeshComponent)
+    elasticityDependentField.ComponentMeshComponentSet(oc.FieldVariableTypes.T,numberOfDimensions+1,pressureMeshComponent)
 elasticityEquationsSet.DependentCreateFinish()
 
 # Initialise elasticity dependent field from undeformed geometry and displacement bcs and set hydrostatic pressure
-iron.Field.ParametersToFieldParametersComponentCopy(
-    geometricField,iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,1,
-    elasticityDependentField,iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,1)
-iron.Field.ParametersToFieldParametersComponentCopy(
-    geometricField,iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,2,
-    elasticityDependentField,iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,2)
+oc.Field.ParametersToFieldParametersComponentCopy(
+    geometricField,oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,1,
+    elasticityDependentField,oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,1)
+oc.Field.ParametersToFieldParametersComponentCopy(
+    geometricField,oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,2,
+    elasticityDependentField,oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,2)
 if (numberOfDimensions == 3):
-    iron.Field.ParametersToFieldParametersComponentCopy(
-        geometricField,iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,3,
-        elasticityDependentField,iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,3)
+    oc.Field.ParametersToFieldParametersComponentCopy(
+        geometricField,oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,3,
+        elasticityDependentField,oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,3)
 if (materialCompressibility == INCOMPRESSIBLE_MATERIAL):
-    iron.Field.ComponentValuesInitialiseDP(
-        elasticityDependentField,iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,numberOfDimensions+1,pInit)
+    oc.Field.ComponentValuesInitialiseDP(
+        elasticityDependentField,oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,numberOfDimensions+1,pInit)
 
 # Create the material field
-elasticityMaterialsField = iron.Field()
+elasticityMaterialsField = oc.Field()
 elasticityEquationsSet.MaterialsCreateStart(elasticityMaterialsFieldUserNumber,elasticityMaterialsField)
-elasticityMaterialsField.VariableLabelSet(iron.FieldVariableTypes.U,"Material")
+elasticityMaterialsField.VariableLabelSet(oc.FieldVariableTypes.U,"Material")
 elasticityEquationsSet.MaterialsCreateFinish()
 
 # Set materials parameters
@@ -571,47 +571,47 @@ if (timeDependence == STATIC):
         print("Not implemented")
         exit()
     elif (materialLaw == MOONEY_RIVLIN_MATERIAL):    
-        elasticityMaterialsField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES, \
+        elasticityMaterialsField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES, \
                                                              1,mooneyRivlin1)
-        elasticityMaterialsField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES, \
+        elasticityMaterialsField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES, \
                                                              2,mooneyRivlin2)
 elif (timeDependence == DYNAMIC):
     if (materialLaw == ST_VENANT_KIRCHOFF_MATERIAL):
-        elasticityMaterialsField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES, \
+        elasticityMaterialsField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES, \
                                                              1,density)
-        elasticityMaterialsField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES, \
+        elasticityMaterialsField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES, \
                                                              2,lameLambda)
-        elasticityMaterialsField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES, \
+        elasticityMaterialsField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES, \
                                                              3,lameMu)
     elif (materialLaw == MOONEY_RIVLIN_MATERIAL):    
-        elasticityMaterialsField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES, \
+        elasticityMaterialsField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES, \
                                                              1,density)
-        elasticityMaterialsField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES, \
+        elasticityMaterialsField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES, \
                                                              2,mooneyRivlin1)
-        elasticityMaterialsField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES, \
+        elasticityMaterialsField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES, \
                                                              3,mooneyRivlin2)
 else:
     print("Invalid time dependence")
     exit()
     
 # Create elasticity equations
-elasticityEquations = iron.Equations()
+elasticityEquations = oc.Equations()
 elasticityEquationsSet.EquationsCreateStart(elasticityEquations)
-elasticityEquations.SparsityTypeSet(iron.EquationsSparsityTypes.SPARSE)
-elasticityEquations.OutputTypeSet(iron.EquationsOutputTypes.NONE)
-elasticityEquations.OutputTypeSet(iron.EquationsOutputTypes.MATRIX)
+elasticityEquations.SparsityTypeSet(oc.EquationsSparsityTypes.SPARSE)
+elasticityEquations.OutputTypeSet(oc.EquationsOutputTypes.NONE)
+elasticityEquations.OutputTypeSet(oc.EquationsOutputTypes.MATRIX)
 if (massLumping == LUMPED):
-    elasticityEquations.LumpingTypeSet(iron.EquationsLumpingTypes.LUMPED)
+    elasticityEquations.LumpingTypeSet(oc.EquationsLumpingTypes.LUMPED)
 elasticityEquationsSet.EquationsCreateFinish()
 
 # Use analytic Jacobian
-elasticityEquations.JacobianCalculationTypeSet(1,iron.FieldVariableTypes.U,iron.EquationsJacobianCalculated.ANALYTIC)
-#elasticityEquations.JacobianCalculationTypeSet(1,iron.FieldVariableTypes.U,iron.EquationsJacobianCalculated.FINITE_DIFFERENCE)
-#elasticityEquations.JacobianFiniteDifferenceStepSizeSet(1,iron.FieldVariableTypes.U,1.0e-8)
+elasticityEquations.JacobianCalculationTypeSet(1,oc.FieldVariableTypes.U,oc.EquationsJacobianCalculated.ANALYTIC)
+#elasticityEquations.JacobianCalculationTypeSet(1,oc.FieldVariableTypes.U,oc.EquationsJacobianCalculated.FINITE_DIFFERENCE)
+#elasticityEquations.JacobianFiniteDifferenceStepSizeSet(1,oc.FieldVariableTypes.U,1.0e-8)
 
 if(timeDependence == DYNAMIC):
     # Create CellML equations for the temporal solid boundary conditions
-    bcCellML = iron.CellML()
+    bcCellML = oc.CellML()
     bcCellML.CreateStart(bcCellMLUserNumber,region)
     if (boundaryConditionType == DIRICHLET_BCS):
         bcCellMLIdx = bcCellML.ModelImport("input/sinusoiddispbc.cellml")
@@ -641,113 +641,113 @@ if(timeDependence == DYNAMIC):
     bcCellML.FieldMapsCreateStart()
     if (boundaryConditionType == DIRICHLET_BCS):
         # Map geometric positions 
-        bcCellML.CreateFieldToCellMLMap(geometricField,iron.FieldVariableTypes.U,1,iron.FieldParameterSetTypes.VALUES,
-	                                bcCellMLIdx,"main/geometricX",iron.FieldParameterSetTypes.VALUES)
-        bcCellML.CreateFieldToCellMLMap(geometricField,iron.FieldVariableTypes.U,2,iron.FieldParameterSetTypes.VALUES,
-	                                bcCellMLIdx,"main/geometricY",iron.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateFieldToCellMLMap(geometricField,oc.FieldVariableTypes.U,1,oc.FieldParameterSetTypes.VALUES,
+	                                bcCellMLIdx,"main/geometricX",oc.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateFieldToCellMLMap(geometricField,oc.FieldVariableTypes.U,2,oc.FieldParameterSetTypes.VALUES,
+	                                bcCellMLIdx,"main/geometricY",oc.FieldParameterSetTypes.VALUES)
         if (numberOfDimensions == 3):
-            bcCellML.CreateFieldToCellMLMap(geometricField,iron.FieldVariableTypes.U,3,iron.FieldParameterSetTypes.VALUES,
-	                                    bcCellMLIdx,"main/geometricZ",iron.FieldParameterSetTypes.VALUES)
+            bcCellML.CreateFieldToCellMLMap(geometricField,oc.FieldVariableTypes.U,3,oc.FieldParameterSetTypes.VALUES,
+	                                    bcCellMLIdx,"main/geometricZ",oc.FieldParameterSetTypes.VALUES)
         # Map deformed position to ensure dependent field isn't cleared when the forces are copied back
-        bcCellML.CreateFieldToCellMLMap(elasticityDependentField,iron.FieldVariableTypes.U,1,iron.FieldParameterSetTypes.VALUES,
-	                                bcCellMLIdx,"main/deformedX",iron.FieldParameterSetTypes.VALUES)
-        bcCellML.CreateFieldToCellMLMap(elasticityDependentField,iron.FieldVariableTypes.U,2,iron.FieldParameterSetTypes.VALUES,
-	                                bcCellMLIdx,"main/deformedY",iron.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateFieldToCellMLMap(elasticityDependentField,oc.FieldVariableTypes.U,1,oc.FieldParameterSetTypes.VALUES,
+	                                bcCellMLIdx,"main/deformedX",oc.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateFieldToCellMLMap(elasticityDependentField,oc.FieldVariableTypes.U,2,oc.FieldParameterSetTypes.VALUES,
+	                                bcCellMLIdx,"main/deformedY",oc.FieldParameterSetTypes.VALUES)
         if (numberOfDimensions == 3):
-            bcCellML.CreateFieldToCellMLMap(elasticityDependentField,iron.FieldVariableTypes.U,3,iron.FieldParameterSetTypes.VALUES,
-	                                    bcCellMLIdx,"main/deformedZ",iron.FieldParameterSetTypes.VALUES)
+            bcCellML.CreateFieldToCellMLMap(elasticityDependentField,oc.FieldVariableTypes.U,3,oc.FieldParameterSetTypes.VALUES,
+	                                    bcCellMLIdx,"main/deformedZ",oc.FieldParameterSetTypes.VALUES)
         # Map displacement to dependent field
-        bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/deformedX",iron.FieldParameterSetTypes.VALUES,
-	                                elasticityDependentField,iron.FieldVariableTypes.U,1,iron.FieldParameterSetTypes.VALUES)
-        bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/deformedY",iron.FieldParameterSetTypes.VALUES,
-	                                elasticityDependentField,iron.FieldVariableTypes.U,2,iron.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/deformedX",oc.FieldParameterSetTypes.VALUES,
+	                                elasticityDependentField,oc.FieldVariableTypes.U,1,oc.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/deformedY",oc.FieldParameterSetTypes.VALUES,
+	                                elasticityDependentField,oc.FieldVariableTypes.U,2,oc.FieldParameterSetTypes.VALUES)
         if (numberOfDimensions == 3):
-            bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/deformedZ",iron.FieldParameterSetTypes.VALUES,
-	                                    elasticityDependentField,iron.FieldVariableTypes.U,3,iron.FieldParameterSetTypes.VALUES)
+            bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/deformedZ",oc.FieldParameterSetTypes.VALUES,
+	                                    elasticityDependentField,oc.FieldVariableTypes.U,3,oc.FieldParameterSetTypes.VALUES)
     else:
         # Map forces to ensure dependent field isn't cleared when the forces are copied back
-        bcCellML.CreateFieldToCellMLMap(elasticityDependentField,iron.FieldVariableTypes.DELUDELN,1,iron.FieldParameterSetTypes.VALUES,
-	                                bcCellMLIdx,"main/forceX",iron.FieldParameterSetTypes.VALUES)
-        bcCellML.CreateFieldToCellMLMap(elasticityDependentField,iron.FieldVariableTypes.DELUDELN,2,iron.FieldParameterSetTypes.VALUES,
-	                                bcCellMLIdx,"main/forceY",iron.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateFieldToCellMLMap(elasticityDependentField,oc.FieldVariableTypes.T,1,oc.FieldParameterSetTypes.VALUES,
+	                                bcCellMLIdx,"main/forceX",oc.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateFieldToCellMLMap(elasticityDependentField,oc.FieldVariableTypes.T,2,oc.FieldParameterSetTypes.VALUES,
+	                                bcCellMLIdx,"main/forceY",oc.FieldParameterSetTypes.VALUES)
         if (numberOfDimensions == 3):
-            bcCellML.CreateFieldToCellMLMap(elasticityDependentField,iron.FieldVariableTypes.DELUDELN,3,iron.FieldParameterSetTypes.VALUES,
-	                                    bcCellMLIdx,"main/forceZ",iron.FieldParameterSetTypes.VALUES)
+            bcCellML.CreateFieldToCellMLMap(elasticityDependentField,oc.FieldVariableTypes.T,3,oc.FieldParameterSetTypes.VALUES,
+	                                    bcCellMLIdx,"main/forceZ",oc.FieldParameterSetTypes.VALUES)
         # Map forces to dependent traction field
-        bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/forceX",iron.FieldParameterSetTypes.VALUES,
-	                                elasticityDependentField,iron.FieldVariableTypes.DELUDELN,1,iron.FieldParameterSetTypes.VALUES)
-        bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/forceY",iron.FieldParameterSetTypes.VALUES,
-	                                elasticityDependentField,iron.FieldVariableTypes.DELUDELN,2,iron.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/forceX",oc.FieldParameterSetTypes.VALUES,
+	                                elasticityDependentField,oc.FieldVariableTypes.T,1,oc.FieldParameterSetTypes.VALUES)
+        bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/forceY",oc.FieldParameterSetTypes.VALUES,
+	                                elasticityDependentField,oc.FieldVariableTypes.T,2,oc.FieldParameterSetTypes.VALUES)
         if (numberOfDimensions == 3):
-            bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/forceZ",iron.FieldParameterSetTypes.VALUES,
-	                                    elasticityDependentField,iron.FieldVariableTypes.DELUDELN,3,iron.FieldParameterSetTypes.VALUES)
+            bcCellML.CreateCellMLToFieldMap(bcCellMLIdx,"main/forceZ",oc.FieldParameterSetTypes.VALUES,
+	                                    elasticityDependentField,oc.FieldVariableTypes.T,3,oc.FieldParameterSetTypes.VALUES)
     bcCellML.FieldMapsCreateFinish()
 
     # Create the CellML models field
-    bcCellMLModelsField = iron.Field()
+    bcCellMLModelsField = oc.Field()
     bcCellML.ModelsFieldCreateStart(bcCellMLModelsFieldUserNumber,bcCellMLModelsField)
-    bcCellMLModelsField.VariableLabelSet(iron.FieldVariableTypes.U,"BCModelMap")
+    bcCellMLModelsField.VariableLabelSet(oc.FieldVariableTypes.U,"BCModelMap")
     bcCellML.ModelsFieldCreateFinish()
     
     # Only evaluate BC at the end of the cantilever
-    bcCellMLModelsField.ComponentValuesInitialiseIntg(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,1,0)
+    bcCellMLModelsField.ComponentValuesInitialiseIntg(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,1,0)
     if (numberOfDimensions == 2):
         nodeNumber = numberOfNodes
         nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
         if (nodeDomain == computationalNodeNumber):
-            bcCellMLModelsField.ParameterSetUpdateNodeIntg(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,
-                                                           1,iron.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,bcCellMLIdx)
+            bcCellMLModelsField.ParameterSetUpdateNodeIntg(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,
+                                                           1,oc.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,bcCellMLIdx)
     else:
         for zNodeIdx in range(1,numberOfZNodes+1):
             nodeNumber=zNodeIdx*numberOfXNodes*numberOfYNodes
             nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
             if (nodeDomain == computationalNodeNumber):
-                bcCellMLModelsField.ParameterSetUpdateNodeIntg(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,
-                                                               1,iron.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,bcCellMLIdx)
+                bcCellMLModelsField.ParameterSetUpdateNodeIntg(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,
+                                                               1,oc.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,bcCellMLIdx)
 
     # Create the CellML state field
-    bcCellMLStateField = iron.Field()
+    bcCellMLStateField = oc.Field()
     bcCellML.StateFieldCreateStart(bcCellMLStateFieldUserNumber,bcCellMLStateField)
-    bcCellMLStateField.VariableLabelSet(iron.FieldVariableTypes.U,"BCState")
+    bcCellMLStateField.VariableLabelSet(oc.FieldVariableTypes.U,"BCState")
     bcCellML.StateFieldCreateFinish()
     
     # Create the CellML parameters field
-    bcCellMLParametersField = iron.Field()
+    bcCellMLParametersField = oc.Field()
     bcCellML.ParametersFieldCreateStart(bcCellMLParametersFieldUserNumber,bcCellMLParametersField)
-    bcCellMLParametersField.VariableLabelSet(iron.FieldVariableTypes.U,"BCParameters")
+    bcCellMLParametersField.VariableLabelSet(oc.FieldVariableTypes.U,"BCParameters")
     bcCellML.ParametersFieldCreateFinish()
     
     # Get the component numbers
     if (boundaryConditionType == DIRICHLET_BCS):
-        maxDisplacementComponentNumber = bcCellML.FieldComponentGet(bcCellMLIdx,iron.CellMLFieldTypes.PARAMETERS,"main/maxDisplacement")
+        maxDisplacementComponentNumber = bcCellML.FieldComponentGet(bcCellMLIdx,oc.CellMLFieldTypes.PARAMETERS,"main/maxDisplacement")
     else:
-        maxForceComponentNumber = bcCellML.FieldComponentGet(bcCellMLIdx,iron.CellMLFieldTypes.PARAMETERS,"main/maxForce")
-    frequencyComponentNumber = bcCellML.FieldComponentGet(bcCellMLIdx,iron.CellMLFieldTypes.PARAMETERS,"main/frequency")
-    phaseComponentNumber = bcCellML.FieldComponentGet(bcCellMLIdx,iron.CellMLFieldTypes.PARAMETERS,"main/phase")
+        maxForceComponentNumber = bcCellML.FieldComponentGet(bcCellMLIdx,oc.CellMLFieldTypes.PARAMETERS,"main/maxForce")
+    frequencyComponentNumber = bcCellML.FieldComponentGet(bcCellMLIdx,oc.CellMLFieldTypes.PARAMETERS,"main/frequency")
+    phaseComponentNumber = bcCellML.FieldComponentGet(bcCellMLIdx,oc.CellMLFieldTypes.PARAMETERS,"main/phase")
     # Set up the parameters field
     if (boundaryConditionType == DIRICHLET_BCS):
-        bcCellMLParametersField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,maxDisplacementComponentNumber,maxDisplacement)
+        bcCellMLParametersField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,maxDisplacementComponentNumber,maxDisplacement)
     else:
-        bcCellMLParametersField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,maxForceComponentNumber,maxForce)
-    bcCellMLParametersField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,frequencyComponentNumber,frequency)
-    bcCellMLParametersField.ComponentValuesInitialiseDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.VALUES,phaseComponentNumber,phase)
+        bcCellMLParametersField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,maxForceComponentNumber,maxForce)
+    bcCellMLParametersField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,frequencyComponentNumber,frequency)
+    bcCellMLParametersField.ComponentValuesInitialiseDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,phaseComponentNumber,phase)
 
     # Create the CELL intermediate field
-    bcCellMLIntermediateField = iron.Field()
+    bcCellMLIntermediateField = oc.Field()
     bcCellML.IntermediateFieldCreateStart(bcCellMLIntermediateFieldUserNumber,bcCellMLIntermediateField)
-    bcCellMLIntermediateField.VariableLabelSet(iron.FieldVariableTypes.U,"BCIntermediate")
+    bcCellMLIntermediateField.VariableLabelSet(oc.FieldVariableTypes.U,"BCIntermediate")
     bcCellML.IntermediateFieldCreateFinish()
     
 # Define the elasticity problem
-elasticityProblem = iron.Problem()
+elasticityProblem = oc.Problem()
 if (timeDependence == STATIC):
-    elasticityProblemSpecification = [iron.ProblemClasses.ELASTICITY,
-                                      iron.ProblemTypes.FINITE_ELASTICITY,
-                                      iron.ProblemSubtypes.STATIC_FINITE_ELASTICITY]
+    elasticityProblemSpecification = [oc.ProblemClasses.ELASTICITY,
+                                      oc.ProblemTypes.FINITE_ELASTICITY,
+                                      oc.ProblemSubtypes.STATIC_FINITE_ELASTICITY]
 elif (timeDependence == DYNAMIC):
-    elasticityProblemSpecification = [iron.ProblemClasses.ELASTICITY,
-                                      iron.ProblemTypes.FINITE_ELASTICITY,
-                                      iron.ProblemSubtypes.DYNAMIC_FINITE_ELASTICITY]
+    elasticityProblemSpecification = [oc.ProblemClasses.ELASTICITY,
+                                      oc.ProblemTypes.FINITE_ELASTICITY,
+                                      oc.ProblemSubtypes.DYNAMIC_FINITE_ELASTICITY]
 else:
     print("Invalid time dependence")
     exit()
@@ -757,9 +757,9 @@ elasticityProblem.CreateFinish()
 
 # Create the elasticity problem control loop
 elasticityProblem.ControlLoopCreateStart()
-controlLoop = iron.ControlLoop()
-elasticityProblem.ControlLoopGet([iron.ControlLoopIdentifiers.NODE],controlLoop)
-controlLoop.OutputTypeSet(iron.ControlLoopOutputTypes.PROGRESS)
+controlLoop = oc.ControlLoop()
+elasticityProblem.ControlLoopGet([oc.ControlLoopIdentifiers.NODE],controlLoop)
+controlLoop.OutputTypeSet(oc.ControlLoopOutputTypes.PROGRESS)
 if (timeDependence == STATIC):
     controlLoop.LabelSet('LoadIncrementLoop')
     controlLoop.MaximumIterationsSet(numberOfLoadIncrements)
@@ -773,41 +773,41 @@ else:
 elasticityProblem.ControlLoopCreateFinish()
 
 # Create elasticity problem solvers
-bcCellMLEvaluationSolver = iron.Solver()
-elasticityDynamicSolver = iron.Solver()
-elasticityNonlinearSolver = iron.Solver()
-elasticityLinearSolver = iron.Solver()
+bcCellMLEvaluationSolver = oc.Solver()
+elasticityDynamicSolver = oc.Solver()
+elasticityNonlinearSolver = oc.Solver()
+elasticityLinearSolver = oc.Solver()
 elasticityProblem.SolversCreateStart()
 if (timeDependence == STATIC):
-    elasticityProblem.SolverGet([iron.ControlLoopIdentifiers.NODE],1,elasticityNonlinearSolver)
+    elasticityProblem.SolverGet([oc.ControlLoopIdentifiers.NODE],1,elasticityNonlinearSolver)
 elif (timeDependence == DYNAMIC):
     # Get the BC CellML solver
-    elasticityProblem.SolverGet([iron.ControlLoopIdentifiers.NODE],1,bcCellMLEvaluationSolver)
-    bcCellMLEvaluationSolver.outputType = iron.SolverOutputTypes.PROGRESS
+    elasticityProblem.SolverGet([oc.ControlLoopIdentifiers.NODE],1,bcCellMLEvaluationSolver)
+    bcCellMLEvaluationSolver.outputType = oc.SolverOutputTypes.PROGRESS
     # Get the dynamic solver
-    elasticityProblem.SolverGet([iron.ControlLoopIdentifiers.NODE],2,elasticityDynamicSolver)
-    #elasticityDynamicSolver.OutputTypeSet(iron.SolverOutputTypes.MONITOR)
-    elasticityDynamicSolver.OutputTypeSet(iron.SolverOutputTypes.MATRIX)
-    elasticityDynamicSolver.DynamicSchemeSet(iron.DynamicSchemeTypes.NEWMARK1)
-    #elasticityDynamicSolver.DynamicSchemeSet(iron.DynamicSchemeTypes.NEWMARK2)
+    elasticityProblem.SolverGet([oc.ControlLoopIdentifiers.NODE],2,elasticityDynamicSolver)
+    #elasticityDynamicSolver.OutputTypeSet(oc.SolverOutputTypes.MONITOR)
+    elasticityDynamicSolver.OutputTypeSet(oc.SolverOutputTypes.MATRIX)
+    elasticityDynamicSolver.DynamicSchemeSet(oc.DynamicSchemeTypes.NEWMARK1)
+    #elasticityDynamicSolver.DynamicSchemeSet(oc.DynamicSchemeTypes.NEWMARK2)
     elasticityDynamicSolver.DynamicNonlinearSolverGet(elasticityNonlinearSolver)
 else:
     print("Invalid time dependence")
     exit()    
-elasticityNonlinearSolver.OutputTypeSet(iron.SolverOutputTypes.MONITOR)
-#elasticityNonlinearSolver.OutputTypeSet(iron.SolverOutputTypes.PROGRESS)
-elasticityNonlinearSolver.OutputTypeSet(iron.SolverOutputTypes.MATRIX)
-#elasticityNonlinearSolver.NewtonJacobianCalculationTypeSet(iron.JacobianCalculationTypes.FD)
-elasticityNonlinearSolver.NewtonJacobianCalculationTypeSet(iron.JacobianCalculationTypes.EQUATIONS)
+elasticityNonlinearSolver.OutputTypeSet(oc.SolverOutputTypes.MONITOR)
+#elasticityNonlinearSolver.OutputTypeSet(oc.SolverOutputTypes.PROGRESS)
+elasticityNonlinearSolver.OutputTypeSet(oc.SolverOutputTypes.MATRIX)
+#elasticityNonlinearSolver.NewtonJacobianCalculationTypeSet(oc.JacobianCalculationTypes.FD)
+elasticityNonlinearSolver.NewtonJacobianCalculationTypeSet(oc.JacobianCalculationTypes.EQUATIONS)
 elasticityNonlinearSolver.NewtonAbsoluteToleranceSet(1e-8)
 elasticityNonlinearSolver.NewtonSolutionToleranceSet(1e-8)
 elasticityNonlinearSolver.NewtonRelativeToleranceSet(1e-8)
 elasticityNonlinearSolver.NewtonLinearSolverGet(elasticityLinearSolver)
-elasticityLinearSolver.linearType = iron.LinearSolverTypes.DIRECT
+elasticityLinearSolver.linearType = oc.LinearSolverTypes.DIRECT
 elasticityProblem.SolversCreateFinish()
 
 # Create elasticity solver equations and add elasticity equations set to solver equations
-elasticitySolverEquations = iron.SolverEquations()
+elasticitySolverEquations = oc.SolverEquations()
 elasticityProblem.SolverEquationsCreateStart()
 if (timeDependence == STATIC):
     elasticityNonlinearSolver.SolverEquationsGet(elasticitySolverEquations)
@@ -816,19 +816,19 @@ elif (timeDependence == DYNAMIC):
 else:
     print("Invalid time dependence")
     exit()    
-elasticitySolverEquations.SparsityTypeSet(iron.SolverEquationsSparsityTypes.SPARSE)
+elasticitySolverEquations.SparsityTypeSet(oc.SolverEquationsSparsityTypes.SPARSE)
 elasticityEquationsSetIndex = elasticitySolverEquations.EquationsSetAdd(elasticityEquationsSet)
 elasticityProblem.SolverEquationsCreateFinish()
 
 if (timeDependence != STATIC):
-    bcEquations = iron.CellMLEquations()
+    bcEquations = oc.CellMLEquations()
     elasticityProblem.CellMLEquationsCreateStart()
     bcCellMLEvaluationSolver.CellMLEquationsGet(bcEquations)
     bcEquationsIndex = bcEquations.CellMLAdd(bcCellML)
     elasticityProblem.CellMLEquationsCreateFinish()
     
 # Prescribe boundary conditions (absolute nodal parameters)
-elasticityBoundaryConditions = iron.BoundaryConditions()
+elasticityBoundaryConditions = oc.BoundaryConditions()
 elasticitySolverEquations.BoundaryConditionsCreateStart(elasticityBoundaryConditions)
 
 if (numberOfDimensions == 2):
@@ -837,10 +837,10 @@ if (numberOfDimensions == 2):
         nodeNumber=yNodeIdx*numberOfXNodes+1
         nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
         if (nodeDomain == computationalNodeNumber):
-            elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,1,
-                                                 iron.BoundaryConditionsTypes.FIXED,0.0)
-            elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,2,
-                                                 iron.BoundaryConditionsTypes.FIXED,0.0)
+            elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,1,
+                                                 oc.BoundaryConditionsTypes.FIXED,0.0)
+            elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,2,
+                                                 oc.BoundaryConditionsTypes.FIXED,0.0)
 else:
     for zNodeIdx in range(1,numberOfZNodes+1):
         for yNodeIdx in range(1,numberOfYNodes+1):
@@ -848,12 +848,12 @@ else:
             nodeNumber=(zNodeIdx-1)*numberOfXNodes*numberOfYNodes+(yNodeIdx-1)*numberOfXNodes+1
             nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
             if (nodeDomain == computationalNodeNumber):
-                elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,1,
-                                                     iron.BoundaryConditionsTypes.FIXED,0.0)
-                elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,2,
-                                                     iron.BoundaryConditionsTypes.FIXED,0.0)
-                elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,3,
-                                                     iron.BoundaryConditionsTypes.FIXED,0.0)
+                elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,1,
+                                                     oc.BoundaryConditionsTypes.FIXED,0.0)
+                elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,2,
+                                                     oc.BoundaryConditionsTypes.FIXED,0.0)
+                elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,3,
+                                                     oc.BoundaryConditionsTypes.FIXED,0.0)
 
 if (boundaryConditionType == DIRICHLET_BCS):
     if (timeDependence == STATIC):
@@ -865,22 +865,22 @@ if (boundaryConditionType == DIRICHLET_BCS):
         nodeNumber = numberOfNodes
         nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
         if (nodeDomain == computationalNodeNumber):
-            elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,1,
-                                                 iron.BoundaryConditionsTypes.FIXED,0.0)
-            elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,2,
-                                                 iron.BoundaryConditionsTypes.FIXED,initialDisplacement)
+            elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,1,
+                                                 oc.BoundaryConditionsTypes.FIXED,0.0)
+            elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,2,
+                                                 oc.BoundaryConditionsTypes.FIXED,initialDisplacement)
     else:
         # Set downward displacement on right-hand edge (value will come from CellML)
         for zNodeIdx in range(1,numberOfZNodes+1):
             nodeNumber=zNodeIdx*numberOfXNodes*numberOfYNodes
             nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
             if (nodeDomain == computationalNodeNumber):
-                elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,1,
-                                                     iron.BoundaryConditionsTypes.FIXED,0.0)
-                elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,2,
-                                                     iron.BoundaryConditionsTypes.FIXED,initialDisplacement)
-                elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,3,
-                                                     iron.BoundaryConditionsTypes.FIXED,0.0)
+                elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,1,
+                                                     oc.BoundaryConditionsTypes.FIXED,0.0)
+                elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,2,
+                                                     oc.BoundaryConditionsTypes.FIXED,initialDisplacement)
+                elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,3,
+                                                     oc.BoundaryConditionsTypes.FIXED,0.0)
 else:
     if (timeDependence == STATIC):
         initialForce = maxForce
@@ -891,22 +891,22 @@ else:
         nodeNumber = numberOfNodes
         nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
         if (nodeDomain == computationalNodeNumber):
-            elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.DELUDELN,1,1,nodeNumber,1,
-                                                 iron.BoundaryConditionsTypes.FIXED,0.0)
-            elasticityBoundaryConditions.AddNode(elasticityDependentField,iron.FieldVariableTypes.DELUDELN,1,1,nodeNumber,2,
-                                                 iron.BoundaryConditionsTypes.FIXED,initialForce)
+            elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.T,1,1,nodeNumber,1,
+                                                 oc.BoundaryConditionsTypes.FIXED,0.0)
+            elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.T,1,1,nodeNumber,2,
+                                                 oc.BoundaryConditionsTypes.FIXED,initialForce)
     else:
         # Set downward force on right-hand edge (value will come from CellML)
         for zNodeIdx in range(1,numberOfZNodes+1):
             nodeNumber=zNodeIdx*numberOfXNodes*numberOfYNodes
             nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
             if (nodeDomain == computationalNodeNumber):
-                elasticityBoundaryConditions.SetNode(elasticityDependentField,iron.FieldVariableTypes.DELUDELN,1,1,nodeNumber,1,
-                                                     iron.BoundaryConditionsTypes.FIXED,0.0)
-                elasticityBoundaryConditions.SetNode(elasticityDependentField,iron.FieldVariableTypes.DELUDELN,1,1,nodeNumber,2,
-                                                     iron.BoundaryConditionsTypes.FIXED,initialForce)
-                elasticityBoundaryConditions.SetNode(elasticityDependentField,iron.FieldVariableTypes.DELUDELN,1,1,nodeNumber,3,
-                                                     iron.BoundaryConditionsTypes.FIXED,0.0)
+                elasticityBoundaryConditions.SetNode(elasticityDependentField,oc.FieldVariableTypes.T,1,1,nodeNumber,1,
+                                                     oc.BoundaryConditionsTypes.FIXED,0.0)
+                elasticityBoundaryConditions.SetNode(elasticityDependentField,oc.FieldVariableTypes.T,1,1,nodeNumber,2,
+                                                     oc.BoundaryConditionsTypes.FIXED,initialForce)
+                elasticityBoundaryConditions.SetNode(elasticityDependentField,oc.FieldVariableTypes.T,1,1,nodeNumber,3,
+                                                     oc.BoundaryConditionsTypes.FIXED,0.0)
 if (materialCompressibility == INCOMPRESSIBLE_MATERIAL):         
     # Set reference pressure
     if (pressureInterpolation == ELEMENT_CONSTANT):
@@ -914,14 +914,14 @@ if (materialCompressibility == INCOMPRESSIBLE_MATERIAL):
             elementNumber = 1
             elementDomain = decomposition.ElementDomainGet(elementNumber)
             if (elementDomain == computationalNodeNumber):
-                elasticityBoundaryConditions.SetElement(elasticityDependentField,iron.FieldVariableTypes.U,elementNumber,numberOfDimensions+1,
-                                                        iron.BoundaryConditionsTypes.FIXED,pRef)
+                elasticityBoundaryConditions.SetElement(elasticityDependentField,oc.FieldVariableTypes.U,elementNumber,numberOfDimensions+1,
+                                                        oc.BoundaryConditionsTypes.FIXED,pRef)
     else:
         nodeNumber = 1
         nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
         if (nodeDomain == computationalNodeNumber):
-            elasticityBoundaryConditions.SetNode(elasticityDependentField,iron.FieldVariableTypes.U,1,1,nodeNumber,numberOfDimensions+1,
-                                                 iron.BoundaryConditionsTypes.FIXED,pRef)
+            elasticityBoundaryConditions.SetNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,numberOfDimensions+1,
+                                                 oc.BoundaryConditionsTypes.FIXED,pRef)
                 
 elasticitySolverEquations.BoundaryConditionsCreateFinish()
 
@@ -935,10 +935,10 @@ if (timeDependence == DYNAMIC):
                 nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
                 if (nodeDomain == computationalNodeNumber):
                     initialVelocity = 2.0*math.pi*frequency*maxDisplacement*float(xNodeIdx-1)/float(numberOfXNodes-1)
-                    elasticityDependentField.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.INITIAL_VELOCITY,
-                                                                      1,iron.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,0.0)
-                    elasticityDependentField.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.INITIAL_VELOCITY,
-                                                                      1,iron.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,2,initialVelocity)
+                    elasticityDependentField.ParameterSetUpdateNodeDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.INITIAL_VELOCITY,
+                                                                      1,oc.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,0.0)
+                    elasticityDependentField.ParameterSetUpdateNodeDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.INITIAL_VELOCITY,
+                                                                      1,oc.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,2,initialVelocity)
     else:
         for zNodeIdx in range(1,numberOfZNodes+1):
             for yNodeIdx in range(1,numberOfYNodes+1):
@@ -947,15 +947,15 @@ if (timeDependence == DYNAMIC):
                     nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
                     if (nodeDomain == computationalNodeNumber):
                         initialVelocity = 2.0*math.pi*frequency*maxDisplacement*float(xNodeIdx-1)/float(numberOfXNodes-1)
-                        elasticityDependentField.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.INITIAL_VELOCITY,
-                                                                          1,iron.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,0.0)
-                        elasticityDependentField.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.INITIAL_VELOCITY,
-                                                                          1,iron.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,2,initialVelocity)
-                        elasticityDependentField.ParameterSetUpdateNodeDP(iron.FieldVariableTypes.U,iron.FieldParameterSetTypes.INITIAL_VELOCITY,
-                                                                          1,iron.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,3,0.0)
+                        elasticityDependentField.ParameterSetUpdateNodeDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.INITIAL_VELOCITY,
+                                                                          1,oc.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,0.0)
+                        elasticityDependentField.ParameterSetUpdateNodeDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.INITIAL_VELOCITY,
+                                                                          1,oc.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,2,initialVelocity)
+                        elasticityDependentField.ParameterSetUpdateNodeDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.INITIAL_VELOCITY,
+                                                                          1,oc.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,3,0.0)
                         
 # Export results
-fields = iron.Fields()
+fields = oc.Fields()
 fields.CreateRegion(region)
 fields.NodesExport("Cantilever","FORTRAN")
 fields.ElementsExport("Cantilever","FORTRAN")
@@ -965,7 +965,7 @@ fields.Finalise()
 elasticityProblem.Solve()
                     
 # Export results
-fields = iron.Fields()
+fields = oc.Fields()
 fields.CreateRegion(region)
 fields.NodesExport("Cantilever","FORTRAN")
 fields.ElementsExport("Cantilever","FORTRAN")
