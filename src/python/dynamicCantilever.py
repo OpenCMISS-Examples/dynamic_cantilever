@@ -693,14 +693,14 @@ if(timeDependence == DYNAMIC):
     bcCellMLModelsField.ComponentValuesInitialiseIntg(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,1,0)
     if (numberOfDimensions == 2):
         nodeNumber = numberOfNodes
-        nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+        nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
         if (nodeDomain == computationalNodeNumber):
             bcCellMLModelsField.ParameterSetUpdateNodeIntg(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,
                                                            1,oc.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,bcCellMLIdx)
     else:
         for zNodeIdx in range(1,numberOfZNodes+1):
             nodeNumber=zNodeIdx*numberOfXNodes*numberOfYNodes
-            nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+            nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
             if (nodeDomain == computationalNodeNumber):
                 bcCellMLModelsField.ParameterSetUpdateNodeIntg(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.VALUES,
                                                                1,oc.GlobalDerivativeConstants.NO_GLOBAL_DERIV,nodeNumber,1,bcCellMLIdx)
@@ -835,7 +835,7 @@ if (numberOfDimensions == 2):
     #Set left hand edge to be built in.
     for yNodeIdx in range(0,numberOfYNodes):
         nodeNumber=yNodeIdx*numberOfXNodes+1
-        nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+        nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
         if (nodeDomain == computationalNodeNumber):
             elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,1,
                                                  oc.BoundaryConditionsTypes.FIXED,0.0)
@@ -846,7 +846,7 @@ else:
         for yNodeIdx in range(1,numberOfYNodes+1):
             # Set left hand build in nodes ot no displacement
             nodeNumber=(zNodeIdx-1)*numberOfXNodes*numberOfYNodes+(yNodeIdx-1)*numberOfXNodes+1
-            nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+            nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
             if (nodeDomain == computationalNodeNumber):
                 elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,1,
                                                      oc.BoundaryConditionsTypes.FIXED,0.0)
@@ -863,7 +863,7 @@ if (boundaryConditionType == DIRICHLET_BCS):
     if (numberOfDimensions == 2):
         #Set downward displacement on the right hand edge (value will come from CellML)
         nodeNumber = numberOfNodes
-        nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+        nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
         if (nodeDomain == computationalNodeNumber):
             elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,1,
                                                  oc.BoundaryConditionsTypes.FIXED,0.0)
@@ -873,7 +873,7 @@ if (boundaryConditionType == DIRICHLET_BCS):
         # Set downward displacement on right-hand edge (value will come from CellML)
         for zNodeIdx in range(1,numberOfZNodes+1):
             nodeNumber=zNodeIdx*numberOfXNodes*numberOfYNodes
-            nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+            nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
             if (nodeDomain == computationalNodeNumber):
                 elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,1,
                                                      oc.BoundaryConditionsTypes.FIXED,0.0)
@@ -889,7 +889,7 @@ else:
     if (numberOfDimensions == 2):
         #Set downward force on the right hand edge (value will come from CellML)
         nodeNumber = numberOfNodes
-        nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+        nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
         if (nodeDomain == computationalNodeNumber):
             elasticityBoundaryConditions.AddNode(elasticityDependentField,oc.FieldVariableTypes.T,1,1,nodeNumber,1,
                                                  oc.BoundaryConditionsTypes.FIXED,0.0)
@@ -899,7 +899,7 @@ else:
         # Set downward force on right-hand edge (value will come from CellML)
         for zNodeIdx in range(1,numberOfZNodes+1):
             nodeNumber=zNodeIdx*numberOfXNodes*numberOfYNodes
-            nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+            nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
             if (nodeDomain == computationalNodeNumber):
                 elasticityBoundaryConditions.SetNode(elasticityDependentField,oc.FieldVariableTypes.T,1,1,nodeNumber,1,
                                                      oc.BoundaryConditionsTypes.FIXED,0.0)
@@ -918,7 +918,7 @@ if (materialCompressibility == INCOMPRESSIBLE_MATERIAL):
                                                         oc.BoundaryConditionsTypes.FIXED,pRef)
     else:
         nodeNumber = 1
-        nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+        nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
         if (nodeDomain == computationalNodeNumber):
             elasticityBoundaryConditions.SetNode(elasticityDependentField,oc.FieldVariableTypes.U,1,1,nodeNumber,numberOfDimensions+1,
                                                  oc.BoundaryConditionsTypes.FIXED,pRef)
@@ -932,7 +932,7 @@ if (timeDependence == DYNAMIC):
         for yNodeIdx in range(1,numberOfYNodes+1):
             for xNodeIdx in range(1,numberOfXNodes+1):
                 nodeNumber=xNodeIdx+(yNodeIdx-1)*numberOfXNodes
-                nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+                nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
                 if (nodeDomain == computationalNodeNumber):
                     initialVelocity = 2.0*math.pi*frequency*maxDisplacement*float(xNodeIdx-1)/float(numberOfXNodes-1)
                     elasticityDependentField.ParameterSetUpdateNodeDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.INITIAL_VELOCITY,
@@ -944,7 +944,7 @@ if (timeDependence == DYNAMIC):
             for yNodeIdx in range(1,numberOfYNodes+1):
                 for xNodeIdx in range(1,numberOfXNodes+1):
                     nodeNumber=xNodeIdx+(yNodeIdx-1)*numberOfXNodes+(zNodeIdx-1)*numberOfXNodes*numberOfYNodes
-                    nodeDomain = decomposition.NodeDomainGet(nodeNumber,geometricMeshComponent)
+                    nodeDomain = decomposition.NodeDomainGet(geometricMeshComponent,nodeNumber)
                     if (nodeDomain == computationalNodeNumber):
                         initialVelocity = 2.0*math.pi*frequency*maxDisplacement*float(xNodeIdx-1)/float(numberOfXNodes-1)
                         elasticityDependentField.ParameterSetUpdateNodeDP(oc.FieldVariableTypes.U,oc.FieldParameterSetTypes.INITIAL_VELOCITY,

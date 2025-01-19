@@ -1,4 +1,4 @@
-<?xml version='1.0'?>
+<?xml version='1.0' encoding='UTF-8'?>
 <model cmeta:id="SinusoidDispBC" name="SinusoidDispBC" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#">
     <component name="main">
         <!-- Units -->
@@ -10,11 +10,11 @@
             <unit exponent="-1" units="second"/>
         </units>
         <!-- Variables-->
-        <variable name="time" units="second"/>
+        <variable initial_value="0.0" name="time" units="second"/>
         <variable initial_value="1.0" name="maxDisplacement" units="metre"/>
         <variable initial_value="1.0" name="frequency" units="per_second"/>
         <variable initial_value="0.0" name="phase" units="dimensionless"/>
-        <variable initial_value="0.0" name="dummy" units="metre"/>
+        <!--var dummy: metre {init: 0.0};-->
         <variable initial_value="0.0" name="geometricX" units="metre"/>
         <variable initial_value="0.0" name="geometricY" units="metre"/>
         <variable initial_value="0.0" name="geometricZ" units="metre"/>
@@ -105,32 +105,7 @@
                 <ci>velocityZ</ci>
                 <cn cellml:units="metre_per_second">0.0</cn>
             </apply>
-            <apply>
-                <eq/>
-                <apply>
-                    <diff/>
-                    <bvar>
-                        <ci>time</ci>
-                    </bvar>
-                    <ci>dummy</ci>
-                </apply>
-                <apply>
-                    <plus/>
-                    <apply>
-                        <times/>
-                        <apply>
-                            <plus/>
-                            <ci>deformedX</ci>
-                            <ci>deformedY</ci>
-                            <ci>deformedZ</ci>
-                        </apply>
-                        <ci>time</ci>
-                    </apply>
-                    <ci>velocityX</ci>
-                    <ci>velocityY</ci>
-                    <ci>velocityZ</ci>
-                </apply>
-            </apply>
         </math>
+        <!--ode(dummy, time) = (deformedX+deformedY+deformedZ)/time+velocityX+velocityY+velocityZ;-->
     </component>
 </model>
