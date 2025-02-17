@@ -1,0 +1,69 @@
+<?xml version='1.0'?>
+<model cmeta:id="SinusoidBC" name="SinusoidBC" xmlns="http://www.cellml.org/cellml/1.1#" xmlns:cellml="http://www.cellml.org/cellml/1.1#" xmlns:cmeta="http://www.cellml.org/metadata/1.0#">
+    <component name="main">
+        <!-- Units -->
+        <units name="per_second">
+            <unit exponent="-1" units="second"/>
+        </units>
+        <!-- Variables-->
+        <variable name="time" units="second"/>
+        <variable initial_value="1.0" name="maxForce" units="newton"/>
+        <variable initial_value="1.0" name="frequency" units="per_second"/>
+        <variable initial_value="0.0" name="phase" units="dimensionless"/>
+        <variable initial_value="0.0" name="dummy" units="newton"/>
+        <variable name="forcex" units="newton"/>
+        <variable name="forcey" units="newton"/>
+        <variable name="forcez" units="newton"/>
+        <!-- Equations-->
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <apply>
+                <eq/>
+                <ci>forcex</ci>
+                <cn cellml:units="newton">0.0</cn>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>forcey</ci>
+                <apply>
+                    <times/>
+                    <ci>maxForce</ci>
+                    <apply>
+                        <sin/>
+                        <apply>
+                            <plus/>
+                            <apply>
+                                <times/>
+                                <cn cellml:units="dimensionless">2.0</cn>
+                                <pi/>
+                                <ci>frequency</ci>
+                                <ci>time</ci>
+                            </apply>
+                            <ci>phase</ci>
+                        </apply>
+                    </apply>
+                </apply>
+            </apply>
+            <apply>
+                <eq/>
+                <ci>forcez</ci>
+                <cn cellml:units="newton">0.0</cn>
+            </apply>
+            <apply>
+                <eq/>
+                <apply>
+                    <diff/>
+                    <bvar>
+                        <ci>time</ci>
+                    </bvar>
+                    <ci>dummy</ci>
+                </apply>
+                <apply>
+                    <plus/>
+                    <ci>forcex</ci>
+                    <ci>forcey</ci>
+                    <ci>forcez</ci>
+                </apply>
+            </apply>
+        </math>
+    </component>
+</model>
